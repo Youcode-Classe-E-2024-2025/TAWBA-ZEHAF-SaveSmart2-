@@ -3,16 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model {
+class Category extends Model
+{
+    protected $fillable = [
+        'name',
+        'account_id'
+    ];
+    use softDeletes;
 
-    protected $fillable = ['name', 'user_id', 'type'];
-
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function account(){
+        return $this->belongsTo(Account::class);
     }
 
-    public function expenses() {
-        return $this->hasMany(Expense::class);
+    public function transactions(){
+        return $this->hasMany(Transaction::class);
     }
+
 }
