@@ -1,37 +1,45 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\IncomeController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\GoalController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TransactionController;
 
-// Registration
-Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::get('/', [authController::class , 'logout']);
 
-// Login
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// authontofocation
 
-// Logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/login', [authController::class , 'showLoginForm'])->name('showLoginForm');
+Route::post('/login', [authController::class , 'login'])->name('login');
+Route::get('/register', [authController::class , 'showRegisterForm'])->name('showRegisterForm');
+Route::post('/register', [authController::class , 'register'])->name('register');
+Route::get('/logout', [authController::class , 'logout'])->name('logout');
 
+// dashboards
 
+Route::get('/dashboard', [dashboardController::class , 'showHome'])->name('home');
+Route::get('/userDashboard', [dashboardController::class , 'showUserDashboard'])->name('userDashboard');
 
-// Profile routes
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-});
-Route::get('/profile/add', [ProfileController::class, 'add'])->name('profile.add');
+// profile
+Route::get('/profile/{id}', [profileController::class , 'show'])->name('profile');
+Route::post('/addProfile', [profileController::class , 'store'])->name('addProfile');
 
+// user
+Route::get('/deleteUser/{id}', [UserController::class , 'deleteUser'])->name('deleteUser');
+Route::post('/updateUser/{id}', [UserController::class , 'editUser'])->name('editUser');
 
+// category
+Route::post('/storeCategory', [CategoryController::class , 'store'])->name('storeCategory');
+Route::get('/api/category-totals/revenu' , [CategoryController::class , 'getCategoryTotalsRevenu'])->name('getCategoryTotalsRevenu');
+Route::get('/api/category-totals/depense' , [CategoryController::class , 'getCategoryTotalsDepense'])->name('getCategoryTotalsDepense');
+Route::get('/destroyCategory/{id}' , [CategoryController::class , 'destroy'])->name('destroyCategory');
 
-Route::resource('incomes', IncomeController::class)->middleware('auth');
-Route::resource('expenses', ExpenseController::class)->middleware('auth');
-Route::resource('goals', GoalController::class)->middleware('auth');
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+//Transaction
+
+Route::post('/storeTransactions', [TransactionController::class , 'store'])->name('storeTransactions');
+Route::get('/destroy_trans/{id}' , [TransactionController::class , 'destroy'])->name('destroyTransactions');
+Route::post('/updateTransaction' , [TransactionController::class , 'update'])->name('updateTransaction');
+
