@@ -8,6 +8,9 @@ class ProfileController extends Controller
 {
     public function show() {
         $user = Auth::user();
+        if (!$user->profile_picture && !$user->bio && !$user->phone) {
+            return redirect()->route('profile.add');
+        }
         return view('profile.show', compact('user'));
     }
     public function edit() {
@@ -42,4 +45,9 @@ class ProfileController extends Controller
     
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
+    public function add() {
+        $user = Auth::user();
+        return view('profile.add', compact('user'));
+    }
+    
 }

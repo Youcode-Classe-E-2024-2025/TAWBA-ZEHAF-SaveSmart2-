@@ -2,6 +2,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\GoalController;
 
 // Registration
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
@@ -22,6 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
+Route::get('/profile/add', [ProfileController::class, 'add'])->name('profile.add');
+
+
+
+Route::resource('incomes', IncomeController::class)->middleware('auth');
+Route::resource('expenses', ExpenseController::class)->middleware('auth');
+Route::resource('goals', GoalController::class)->middleware('auth');
 // Route::get('/', function () {
 //     return view('welcome');
 // });
