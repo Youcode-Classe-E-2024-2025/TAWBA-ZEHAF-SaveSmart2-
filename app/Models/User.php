@@ -4,41 +4,44 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
+/**
+ *
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
 
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable,softDeletes;
+    protected $dates = ['deleted_at'];
+    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-   
-    protected $fillable = ['name', 'email', 'password', 'profile_picture', 'bio', 'phone', 'family_id'];
-
-    public function family() {
-        return $this->belongsTo(Family::class);
+    protected $fillable = [
+        'firstName',
+        'lastName',
+        'account_id',
+        'phone',
+        'image'
+    ];
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
     }
 
-    public function incomes() {
-        return $this->hasMany(Income::class);
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
-    public function expenses() {
-        return $this->hasMany(Expense::class);
-    }
-
-    public function categories() {
-        return $this->hasMany(Category::class);
-    }
-
-    public function goals() {
-        return $this->hasMany(Goal::class);
-    }
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -61,4 +64,17 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * @return HasMany
+     */
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+
+
+
+
+
+
 }

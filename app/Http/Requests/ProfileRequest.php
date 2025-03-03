@@ -11,7 +11,7 @@ class ProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return session('user_id');
     }
 
     /**
@@ -22,7 +22,10 @@ class ProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'phone' => 'required',
+            'image' => 'required',
         ];
     }
 }

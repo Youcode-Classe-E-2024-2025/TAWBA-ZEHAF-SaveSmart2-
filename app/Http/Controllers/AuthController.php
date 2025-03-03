@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session;
 /**
  *
  */
-class AuthController extends Controller{
+class authController extends Controller{
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|object
@@ -42,7 +42,7 @@ class AuthController extends Controller{
 
     // new i separate this data i send the name of family and email and password to the account table
         Account::create([
-            'name' => 'ait' . ' ' . $validatedData['lastName'],
+            'name' =>  $validatedData['lastName'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
