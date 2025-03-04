@@ -2,87 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CategoryRequest;
+use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Models\Transaction;
+use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 
-/**
- *
- */
 class CategoryController extends Controller
 {
-
-    /**
-     * @param CategoryRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(CategoryRequest $request)
+    // Afficher le formulaire d'ajout de catégorie
+    public function create()
     {
-        //here i get the name of category and stock it with the acccount id in the tale of category
-        // calidation of data with form request
-        $validated = $request->validated();
-        //accounnt id from session
-        $id = session('id');
-        //addd thecategory to database
-        Category::create([
-            'name' => $validated['name'],
-            'account_id' => $id,
+        return view('create_category');
+    }
+
+    // Enregistrer une nouvelle catégorie
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:categories',
         ]);
-        //rederect the user to the hoome page with success message
-        return to_route('home')->with('success', 'Category created successfully!');
+
+        $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
+        if (!$profile) {
+            return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
+        }
+    
+        Category::create([
+            'name' => $request->name,
+            'user_id' => auth()->id(),
+        ]);
+    
+        return redirect()->route('home', ['id' => $profile->id]);
     }
 
-
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getCategoryTotalsRevenu()
+    // Afficher les catégories sur la page home
+    public function index()
     {
-
-        $totals = Transaction::selectRaw('category_id, SUM(amount) as total')
-            ->where('account_id', session('id'))
-            ->whereNull('deleted_at')
-            ->whereHas('account', function ($query) {
-                $query->where('type', 'revenu');
-            })
-            ->groupBy('category_id')
-            ->with(['category:id,name'])
-            ->get();
-
-
-        return response()->json($totals);
+        $categories = Category::where('user_id', session('user_id')->get()); // Récupérer les catégories de l'utilisateur connecté
+        return view('home', compact('categories')); // Passer la variable à la vue
     }
+    
 
-
-
-    public function getCategoryTotalsDepense()
-    {
-
-        $totals = Transaction::selectRaw('category_id, SUM(amount) as total')
-            ->where('account_id', session('id'))
-            ->whereNull('deleted_at')
-            ->whereHas('account', function ($query) {
-                $query->where('type', 'depense');
-            })
-            ->groupBy('category_id')
-            ->with(['category:id,name'])
-            ->get();
-
-
-        return response()->json($totals);
-    }
-
-
-    /**
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy($id)
-    {
-        $categorie = Category::findOrFail($id);
-        $categorie->delete();
-        return redirect()->back()->with('success', 'categorie deleted successfully!');
-    }
-
-
+    
 }

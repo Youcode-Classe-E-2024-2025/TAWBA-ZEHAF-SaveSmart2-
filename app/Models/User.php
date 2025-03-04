@@ -4,48 +4,35 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-
-/**
- *
- */
 class User extends Authenticatable
 {
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,softDeletes;
-    protected $dates = ['deleted_at'];
-    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'firstName',
-        'lastName',
-        'account_id',
-        'phone',
-        'image'
+        'name',
+        'email',
+        'password',
     ];
-    public function account()
-    {
-        return $this->belongsTo(Account::class);
-    }
 
+    public function profiles()
+{
+    return $this->hasMany(Profile::class);
+}
 
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    }
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -53,28 +40,16 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+    public function getAuthPasswordName(): string
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return 'password';
     }
-
-    /**
-     * @return HasMany
-     */
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-
-
-
-
-
-
 }

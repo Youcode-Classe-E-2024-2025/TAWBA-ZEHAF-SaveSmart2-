@@ -1,45 +1,61 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FinancialController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\TransactionController;
 
-Route::get('/', [authController::class , 'logout']);
+// Accueil
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get( '/welcome', function () {
+    return view('welcome');
+})->name('welcome');
 
-// authontofocation
+// Authentification
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/login', [authController::class , 'showLoginForm'])->name('showLoginForm');
-Route::post('/login', [authController::class , 'login'])->name('login');
-Route::get('/register', [authController::class , 'showRegisterForm'])->name('showRegisterForm');
-Route::post('/register', [authController::class , 'register'])->name('register');
-Route::get('/logout', [authController::class , 'logout'])->name('logout');
+// Profils
+Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles');
+Route::get('/profiles_create', [ProfileController::class, 'create'])->name('profiles.create');
+Route::post('/profiles_create', [ProfileController::class, 'store'])->name('profiles.store');
 
-// dashboards
+// Page d'accueil après connexion   
+Route::get('/home/{id}', [HomeController::class, 'index'])->name('home');
 
-Route::get('/dashboard', [dashboardController::class , 'showHome'])->name('home');
-Route::get('/userDashboard', [dashboardController::class , 'showUserDashboard'])->name('userDashboard');
+// Routes financières
+Route::middleware('auth')->group(function () {
+    // Création des objectifs et transactions
+    Route::get('/create-transaction', [FinancialController::class, 'createTransaction'])->name('financial.createTransaction');
+    Route::post('/store-transaction', [FinancialController::class, 'storeTransaction'])->name('financial.storeTransaction');
+    Route::get('/create-goal', [FinancialController::class, 'createGoal'])->name('financial.createGoal');
+    Route::post('/store-goal', [FinancialController::class, 'storeGoal'])->name('financial.storeGoal');
+    Route::get('/goals', [FinancialController::class, 'showGoals'])->name('financial.showGoals');
+    
+    // Modification et suppression des objectifs financiers
+    Route::get('/goal/{id}/edit', [FinancialController::class, 'editGoal'])->name('financial.editGoal');
+    Route::put('/goal/{id}', [FinancialController::class, 'updateGoal'])->name('financial.updateGoal');
+    Route::delete('/goal/{id}', [FinancialController::class, 'deleteGoal'])->name('financial.deleteGoal');
 
-// profile
-Route::get('/profile/{id}', [profileController::class , 'show'])->name('profile');
-Route::post('/addProfile', [profileController::class , 'store'])->name('addProfile');
+    // Modification et suppression des transactions
+    Route::get('/transaction/{id}/edit', [FinancialController::class, 'editTransaction'])->name('financial.editTransaction');
+    Route::put('/transaction/{id}', [FinancialController::class, 'updateTransaction'])->name('financial.updateTransaction');
+    Route::delete('/transaction/{id}', [FinancialController::class, 'deleteTransaction'])->name('financial.deleteTransaction');
+});
 
-// user
-Route::get('/deleteUser/{id}', [UserController::class , 'deleteUser'])->name('deleteUser');
-Route::post('/updateUser/{id}', [UserController::class , 'editUser'])->name('editUser');
 
-// category
-Route::post('/storeCategory', [CategoryController::class , 'store'])->name('storeCategory');
-Route::get('/api/category-totals/revenu' , [CategoryController::class , 'getCategoryTotalsRevenu'])->name('getCategoryTotalsRevenu');
-Route::get('/api/category-totals/depense' , [CategoryController::class , 'getCategoryTotalsDepense'])->name('getCategoryTotalsDepense');
-Route::get('/destroyCategory/{id}' , [CategoryController::class , 'destroy'])->name('destroyCategory');
+Route::get('create_category', [CategoryController::class, 'create'])->name('categories.create');
 
-//Transaction
-
-Route::post('/storeTransactions', [TransactionController::class , 'store'])->name('storeTransactions');
-Route::get('/destroy_trans/{id}' , [TransactionController::class , 'destroy'])->name('destroyTransactions');
-Route::post('/updateTransaction' , [TransactionController::class , 'update'])->name('updateTransaction');
+// Enregistrer une nouvelle catégorie
+Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+// Supprimer une catégorie
+Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
