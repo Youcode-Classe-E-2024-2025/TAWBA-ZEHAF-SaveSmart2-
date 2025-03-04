@@ -1,0 +1,2 @@
+use case :https://lucid.app/lucidchart/1f94be2b-bfe6-4f6a-bcbf-08a2fb79caff/edit?page=0_0&invitationId=inv_bbe7e7e0-70dd-4b0c-9710-f36737a476af#
+class diagram:https://lucid.app/lucidchart/d637606c-8a45-473b-a08e-3ce7425c6858/edit?page=0_0&invitationId=inv_2bdb0bf4-df16-4a3a-a5f2-05dd0b42b294#
