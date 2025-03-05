@@ -2,52 +2,85 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Profile;
-use App\Models\User;
-use Illuminate\Http\Request;  // Assure-toi d'importer la classe Request
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * Afficher la liste des profils.
-     */
     public function index()
     {
-        // Récupérer tous les profils avec leurs utilisateurs associés
-        $profiles = Profile::with('user')->get();
-
-        // Passer les profils à la vue
-        return view('profiles', compact('profiles'));
+        $profiles = Auth::user()->profiles;
+        return view('profiles.index', compact('profiles'));
     }
 
     public function create()
     {
-        // Récupérer tous les utilisateurs pour l'assigner au profil
-        $users = User::all();
-        return view('profiles_create', compact('users'));
+        return view('profiles.create');
     }
 
-    // Sauvegarder le profil dans la base de données
     public function store(Request $request)
     {
-        // Validation des données du formulaire
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'img' => 'required|image',
+            'password' => 'required|string|min:6'
         ]);
-        
 
-        // Stocker l'image et obtenir son chemin
-        $imagePath = $request->file('img')->store('profiles', 'public');
-
-        // Créer le profil
         Profile::create([
-            'name' => $validated['name'],
-            'img' => $imagePath,
-            'user_id' => session('user_id'),
+            'user_id' => Auth::id(),
+            'name' => $request->name,
+            'password' => Hash::make($request->password)
         ]);
-        
-        return redirect()->route('profiles')->with('success', 'Profil ajouté avec succès.');
+
+        return redirect()->route('profiles.index')->with('success', 'Profil créé avec succès !');
     }
+
+
+    public function edit(Profile $profile)
+{
+    // Vérifie si le profil appartient à l'utilisateur connecté
+    if ($profile->user_id !== Auth::id()) {
+        return redirect()->route('profiles.index')->with('error', 'Vous n\'avez pas accès à ce profil.');
+    }
+
+    return view('profiles.edit', compact('profile'));
+}
+
+public function update(Request $request, Profile $profile)
+{
+    // Vérifie si le profil appartient à l'utilisateur connecté
+    if ($profile->user_id !== Auth::id()) {
+        return redirect()->route('profiles.index')->with('error', 'Vous n\'avez pas accès à ce profil.');
+    }
+
+    // Validation des données
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'password' => 'nullable|string|min:6' 
+    ]);
+
+    
+    $profile->name = $request->name;
+    if ($request->password) {
+        $profile->password = Hash::make($request->password);
+    }
+    $profile->save();
+
+    return redirect()->route('profiles.index')->with('success', 'Profil mis à jour avec succès !');
+}
+
+public function destroy(Profile $profile)
+{
+    // Vérifie si le profil appartient à l'utilisateur connecté
+    if ($profile->user_id !== Auth::id()) {
+        return redirect()->route('profiles.index')->with('error', 'Vous n\'avez pas accès à ce profil.');
+    }
+
+    // Suppression du profil
+    $profile->delete();
+
+    return redirect()->route('profiles.index')->with('success', 'Profil supprimé avec succès !');
+}
+
 }
