@@ -2,45 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
-use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    // Afficher le formulaire d'ajout de catégorie
-    public function create()
+
+    public function index()
     {
-        return view('create_category');
+        $categories = Category::paginate(5);
+        return view('categories.index', compact('categories'));
     }
 
-    // Enregistrer une nouvelle catégorie
+    // Afficher le formulaire de création
+    public function create()
+    {
+        return view('categories.create');
+    }
+
+   
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:categories',
+            'name' => 'required|string|max:255',
         ]);
 
-        $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-        if (!$profile) {
-            return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-        }
-    
         Category::create([
             'name' => $request->name,
-            'user_id' => auth()->id(),
         ]);
-    
-        return redirect()->route('home', ['id' => $profile->id]);
+
+        return redirect()->route('home',session('current_profile'))->with('success', 'Catégorie ajoutée avec succès!');
     }
 
-    // Afficher les catégories sur la page home
-    public function index()
+    // Afficher le formulaire d’édition
+    public function edit(Category $category)
     {
-        $categories = Category::where('user_id', session('user_id')->get()); // Récupérer les catégories de l'utilisateur connecté
-        return view('home', compact('categories')); // Passer la variable à la vue
+        return view('categories.edit', compact('category'));
     }
-    
 
-    
+ 
+    public function update(Request $request, Category $category)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', 'Catégorie mise à jour avec succès!');
+    }
+
+  
+    public function destroy(Category $category)
+    {
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Catégorie supprimée avec succès!');
+    }
 }
