@@ -4,83 +4,68 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Affiche la page d'inscription
-     */
-    public function showRegister()
+   
+    public function showRegisterForm()
     {
-        return view('register');
+        return view('auth.register');
     }
 
-    /**
-     * Affiche la page de connexion
-     */
-    public function showLogin()
+  
+    public function register(Request $request)
     {
-        return view('login');
-    }
-
-    public function showHome()
-    {
-        return view('home');
-    }
-
-
-   /**
- * Gère l'inscription d'un utilisateur
- */
-public function register(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:6',
-    ]);
-    
-    // Création de l'utilisateur
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-    ]);
-
-    return redirect()->route('register')->with('success', 'registerd succufly');
-}
-
-    /**
-     * Gère la connexion d'un utilisateur   
-     */
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $request->session()->put('user_id',$user->id);
-            return to_route('profiles');
-        }
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-        return back()->withErrors(['email' => 'incorrect informations']);
+        Auth::login($user);
+
+        return redirect()->route('login')->with('success', 'Inscription réussie !');
     }
 
-    /**
-     * Gère la déconnexion d'un utilisateur
-     */
+   
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    // Gérer la connexion
+    public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        if (Auth::user()->role == 'user') {
+            session()->put('CompteName', Auth::user()->name);
+            return redirect()->route('profiles.index')->with('success', 'Bienvenue Admin !');
+        } else {
+            return redirect()->route('dashboard')->with('success', 'Connexion réussie !');
+        }
+    }
+
+    return back()->withErrors(['email' => 'Identifiants incorrects']);
+}
+
+
+    
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('login')->with('success', 'logout with succes.');
+        return redirect()->route('login')->with('success', 'Déconnexion réussie.');
     }
-
-    /**
-     * Redirige l'utilisateur en fonction de son rôle
-     */
 }
