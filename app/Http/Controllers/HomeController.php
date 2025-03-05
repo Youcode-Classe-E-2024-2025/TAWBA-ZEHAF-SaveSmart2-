@@ -2,23 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use Illuminate\Http\Request;
-use App\Models\Goal;
+use App\Models\Profile;
 use App\Models\Transaction;
-use App\Models\profile;
-
+use App\Models\SavingsGoal;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    public function index(Profile $profile){
+        
+        $transactions = Transaction::paginate(5);
+        $totalAmount = Transaction::sum('amount');
+       
+        $lastTransaction = Transaction::latest()->first();
+        $objectifinanciers = SavingsGoal::oldest()->first();
+        $budgetOptimization = $this->optimizeBudget($totalAmount);
+        session(['current_profile'=>$profile->id]);
+        return view('home', compact('transactions','totalAmount','lastTransaction','objectifinanciers','budgetOptimization'));
+    }
 
-    public function index($id)
-{
-    $profile = Profile::findOrFail($id); // Récupérer le profil avec l'ID
-    $goals = Goal::all(); // Récupérer tous les objectifs financiers
-    $transactions = Transaction::latest()->get(); // Récupérer toutes les transactions, triées par date
-    $categories = Category::where('user_id', session('user_id'))->get(); // Récupérer les catégories de l'utilisateur connecté
-    return view('home', compact('profile', 'goals', 'transactions', 'categories'));
-}
-    
+    public function affiche(Profile $profile){
+        $goals = SavingsGoal::where('profile_id',$profile->id)->paginate(5);
+        session(['current_profile'=>$profile->id]);
+        return view('profilPersonnel', compact('goals'));
+    }
+
+
+    private function optimizeBudget($budget, $rules = ['besoins' => 50, 'envies' => 30, 'epargne' => 20]) {
+        $allocation = [];
+        foreach ($rules as $category => $percentage) {
+            $allocation[$category] = ($budget * $percentage) / 100;
+        }
+        return $allocation;
+    }
 }
