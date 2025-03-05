@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->integer('account_id');
-//            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade')->after('lastName');
-            $table->string('image')->nullable();
-            $table->string('phone');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->enum('role', ['admin', 'user'])->default('user');
             $table->timestamps();
         });
 
@@ -32,7 +30,6 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
-            $table->string('role')->default('user');
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
