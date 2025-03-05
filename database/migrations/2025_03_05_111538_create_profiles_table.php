@@ -9,21 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up() {
-        Schema::create('incomes', function (Blueprint $table) {
+    public function up(): void
+    {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->string('description');
-            $table->date('date');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Lié à l'utilisateur
+            $table->string('name'); // Nom du profil
+            $table->string('password'); // Mot de passe du profil (crypté)
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('incomes');
+        Schema::dropIfExists('profiles');
     }
 };
