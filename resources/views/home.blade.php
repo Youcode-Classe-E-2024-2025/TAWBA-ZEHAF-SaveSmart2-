@@ -1,121 +1,295 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaveSmart</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-gray-50 font-sans text-gray-800">
+@extends('layouts.app')
 
-<!-- Affichage du profil -->
-<div class="flex items-center justify-between p-6 bg-white rounded-lg shadow-md mb-6">
-    <div class="flex items-center space-x-4">
-        <img src="{{ asset('storage/' . $profile->img) }}" alt="Photo de {{ $profile->name }}" class="w-16 h-16 rounded-full border-2 border-blue-600">
-        <div>
-            <h2 class="text-xl font-semibold text-gray-900">{{ $profile->name }}</h2>
-            <p class="text-sm text-gray-500">Bienvenue sur votre tableau de bord</p>
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50">
+    <!-- Header Section -->
+    <div class="bg-white shadow-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <h1 class="text-3xl font-bold text-gray-900">Tableau de Bord</h1>
+                <div class="flex space-x-3">
+                    <a href="{{ route('categories.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150 ease-in-out">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Nouvelle Catégorie
+                    </a>
+                    <a href="{{ route('transactions.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-150 ease-in-out">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Nouvelle Transaction
+                    </a>
+                    <a href="{{ route('savings_goals.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition duration-150 ease-in-out">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Nouveau Goal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100 transition duration-300 ease-in-out hover:shadow-xl">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-teal-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Transactions</dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">{{ $totalAmount }}</div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100 transition duration-300 ease-in-out hover:shadow-xl">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-emerald-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Objectifs financiers</dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">{{ $objectifinanciers->target_amount }} </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100 transition duration-300 ease-in-out hover:shadow-xl">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-cyan-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Dernière Transaction</dt>
+                                <dd class="items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">{{ $lastTransaction->amount ?? 0 }}</div>
+                                    <span class="text-xs text-gray-600">Par: {{ $lastTransaction->profile->name ?? ''}}</span>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <!-- Pie Chart Card -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100 transition duration-300 ease-in-out hover:shadow-xl">
+                <div class="px-6 py-5">
+                    <h3 class="text-lg font-semibold text-gray-800">Répartition Saving vs Objectif</h3>
+                    <div class="mt-6 h-64">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Progress Card -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100 transition duration-300 ease-in-out hover:shadow-xl">
+                <div class="px-6 py-5">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Budget Total</h3>
+                    <p class="text-3xl font-bold text-gray-800 mb-6">{{ number_format($totalAmount, 2) }} <span class="text-sm text-gray-500">MAD</span></p>
+                    
+                    <!-- Besoins (50%) -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Besoins (50%)</span>
+                            <span class="text-sm font-medium text-gray-700">{{ number_format($budgetOptimization['besoins'], 2) }} MAD</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3">
+                            <div class="bg-teal-500 h-3 rounded-full transition-all duration-500 ease-in-out" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Envies (30%) -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Envies (30%)</span>
+                            <span class="text-sm font-medium text-gray-700">{{ number_format($budgetOptimization['envies'], 2) }} MAD</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3">
+                            <div class="bg-emerald-500 h-3 rounded-full transition-all duration-500 ease-in-out" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Épargne (20%) -->
+                    <div class="mb-2">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Épargne (20%)</span>
+                            <span class="text-sm font-medium text-gray-700">{{ number_format($budgetOptimization['epargne'], 2) }} MAD</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3">
+                            <div class="bg-cyan-500 h-3 rounded-full transition-all duration-500 ease-in-out" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions Table -->
+        <div class="mt-8 bg-white shadow-lg overflow-hidden sm:rounded-xl border border-gray-100">
+            <div class="border-b border-gray-200 px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Transactions récentes</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">Liste des dernières transactions effectuées</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($transactions as $transaction)
+                        <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ $transaction->profile->name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $transaction->type === 'Revenu' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $transaction->type }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ number_format($transaction->amount, 2) }} MAD
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $transaction->category->name ?? 'Non catégorisé' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $transaction->created_at->format('d/m/Y H:i') }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-4 py-3 border-t border-gray-200 sm:px-6">
+                {{ $transactions->links() }}
+            </div>
         </div>
     </div>
 </div>
 
-<div class="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
+<!-- Scripts pour les graphiques -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuration des couleurs
+    const colors = {
+        primary: '#0D9488',
+        success: '#10B981',
+        danger: '#EF4444',
+        warning: '#0891B2',
+        info: '#3B82F6',
+        purple: '#8B5CF6'
+    };
 
-    <h1 class="text-3xl font-semibold text-center text-blue-600 mb-8">Bienvenue dans SaveSmart</h1>
+    // Graphique en Pie Chart
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['Saving', 'Objectif'],
+            datasets: [{
+                data: [{{ $totalAmount }}, {{ $objectifinanciers->target_amount }}],
+                backgroundColor: [colors.success, colors.warning],
+                borderColor: ['#FFFFFF', '#FFFFFF'],
+                borderWidth: 2,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
 
-    <!-- Affichage des objectifs financiers -->
-    <section class="mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Mes Objectifs Financiers</h2>
-        @if($goals->isEmpty())
-            <p class="text-gray-600">Aucun objectif ajouté pour le moment.</p>
-        @else
-            <ul class="space-y-4">
-                @foreach($goals as $goal)
-                    <li class="bg-gray-50 p-4 rounded-lg shadow-sm hover:bg-gray-100 transition">
-                        <strong class="text-lg text-gray-900">{{ $goal->name }}</strong><br>
-                        <span class="text-sm text-gray-600">Montant cible: {{ number_format($goal->target_amount, 2) }}€</span><br>
-                        <span class="text-sm text-gray-600">Montant actuel: {{ number_format($goal->current_amount, 2) }}€</span><br>
-                        <progress class="w-full mt-2" value="{{ $goal->current_amount }}" max="{{ $goal->target_amount }}"></progress><br>
-                        <span class="text-sm text-gray-500">Ajouté par: <strong>{{ $goal->user->name ?? 'Inconnu' }}</strong></span><br>
-                        
-                        <!-- Boutons Modifier et Supprimer -->
-                        <div class="mt-2 flex space-x-4">
-                            <a href="{{ route('financial.editGoal', $goal->id) }}" class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">Modifier</a>
-                            <form action="{{ route('financial.deleteGoal', $goal->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet objectif ?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Supprimer</button>
-                            </form>
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-        <a href="{{ route('financial.createGoal') }}" class="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Ajouter un Objectif</a>
-    </section>
-
-    <hr class="my-6 border-gray-300">
-
-    <!-- Affichage des transactions récentes -->
-    <section class="mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Dernières Transactions</h2>
-        @if($transactions->isEmpty())
-            <p class="text-gray-600">Aucune transaction enregistrée pour le moment.</p>
-        @else
-            <table class="min-w-full table-auto border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Utilisateur</th>
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Date</th>
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Type</th>
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Montant</th>
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Description</th>
-                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-600">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($transactions as $transaction)
-                        <tr class="border-t">
-                            <td class="py-2 px-4 text-sm">{{ $transaction->user->name ?? 'Inconnu' }}</td>
-                            <td class="py-2 px-4 text-sm">{{ $transaction->created_at->format('d/m/Y') }}</td>
-                            <td class="py-2 px-4 text-sm">{{ ucfirst($transaction->type) }}</td>
-                            <td class="py-2 px-4 text-sm">{{ number_format($transaction->amount, 2) }}€</td>
-                            <td class="py-2 px-4 text-sm">{{ $transaction->description }}</td>
-                            <td class="py-2 px-4 text-sm">
-                                <a href="{{ route('financial.editTransaction', $transaction->id) }}" class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">Modifier</a>
-                                <form action="{{ route('financial.deleteTransaction', $transaction->id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endif
-        <a href="{{ route('financial.createTransaction') }}" class="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Ajouter une Transaction</a>
-    </section>
-
-    <!-- Affichage des catégories -->
-    @if(isset($categories) && $categories->isNotEmpty())
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Catégories</h2>
-            <ul class="space-y-2">
-                @foreach($categories as $category)
-                    <li class="bg-gray-50 p-3 rounded-md shadow-sm">{{ $category->name }}</li>
-                @endforeach
-            </ul>
-        </section>
-    @else
-        <p class="text-gray-600">Aucune catégorie disponible.</p>
-    @endif
-    <a href="{{ route('categories.create') }}" class="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-        Ajouter une Catégorie
-    </a>
-
-</div>
-
-</body>
-</html>
+    // Graphique en Bar Chart
+    const ctxBar = document.getElementById('barChart');
+    if (ctxBar) {
+        new Chart(ctxBar.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                datasets: [
+                    {
+                        label: 'Revenus',
+                        data: [12, 19, 3, 5, 2, 3, 8, 14, 10, 15, 9, 33],
+                        backgroundColor: colors.success,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Dépenses',
+                        data: [7, 11, 5, 8, 3, 7, 9, 12, 16, 4, 6, 22],
+                        backgroundColor: colors.danger,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [2, 4]
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+@endsection
