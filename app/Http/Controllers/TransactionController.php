@@ -3,165 +3,88 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
-use App\Models\Goal;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-
-class FinancialController extends Controller
+class TransactionController extends Controller
 {
-    // Afficher le formulaire pour ajouter une transaction
-    public function createTransaction()
+    public function index()
     {
-        $goals = Goal::all(); // Récupérer tous les objectifs pour les lier à une transaction
-        return view('create_transaction', compact('goals'));
+        $transactions = Transaction::whereHas('profile', function ($query) {
+            $query->where('user_id', Auth::id());
+        })->latest()->get();
+
+        return view('transactions.index', compact('transactions'));
     }
 
-    // Ajouter une transaction
-    public function storeTransaction(Request $request)
-{
-    $request->validate([
-        'type' => 'required|in:income,expense',
-        'amount' => 'required|numeric',
-        'description' => 'required|string',
-        'goal_id' => 'nullable|exists:goals,id',
-    ]);
-
-    $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-    if (!$profile) {
-        return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-    }
-
-    Transaction::create([
-        'type' => $request->type,
-        'amount' => $request->amount,
-        'description' => $request->description,
-        'user_id' => auth()->id(),
-        'goal_id' => $request->goal_id,
-    ]);
-
-    return redirect()->route('home', ['id' => $profile->id]);
-}
-
-    // Afficher le formulaire pour ajouter un objectif
-    public function createGoal()
+    public function create()
     {
-        return view('create_goal');
+        $categories = Category::all();
+        return view('transactions.create', compact('categories'));
     }
 
-    // Ajouter un objectif
-    public function storeGoal(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'target_amount' => 'required|numeric',
+            'type' => 'required|in:Revenu,Dépense',
+            'amount' => 'required|numeric|min:0.01',
+            'category_id' => 'nullable|exists:categories,id'
         ]);
-    
-        $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-        if (!$profile) {
-            return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-        }
-    
-        Goal::create([
-            'name' => $request->name,
-            'target_amount' => $request->target_amount,
-            'user_id' => auth()->id(),
+
+        Transaction::create([
+            'profile_id' => session('current_profile'), 
+            'type' => $request->type,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id
         ]);
-    
-        return redirect()->route('home', ['id' => $profile->id]);
-    }
-    // Afficher tous les objectifs financiers et les transactions associées
-    public function showGoals()
-    {
-        $goals = Goal::where('user_id', auth()->id())->with('transactions')->get();
-        return view('goals', compact('goals'));
+
+        return redirect()->route('home',session('current_profile'))->with('success', 'Transaction ajoutée avec succès.');
     }
 
-    // Afficher le formulaire pour modifier un objectif
-public function editGoal($id)
+    public function edit(Transaction $transaction)
 {
-    $goal = Goal::findOrFail($id); // Récupérer l'objectif par son ID
-    return view('edit_goal', compact('goal'));
+    // Vérifier si l'utilisateur a le droit de modifier cette transaction
+    if ($transaction->profile_id !== session('current_profile')) {
+        return redirect()->route('home', session('current_profile'))->with('error', 'Accès non autorisé.');
+    }
+
+    $categories = Category::all(); // Récupérer toutes les catégories
+    return view('transactions.edit', compact('transaction', 'categories'));
 }
 
-// Mettre à jour un objectif
-public function updateGoal(Request $request, $id)
+public function update(Request $request, Transaction $transaction)
 {
+    // Vérifier l'accès
+    if ($transaction->profile_id !== session('current_profile')) {
+        return redirect()->route('home', session('current_profile'))->with('error', 'Accès non autorisé.');
+    }
+
     $request->validate([
-        'name' => 'required|string',
-        'target_amount' => 'required|numeric',
+        'type' => 'required|in:Revenu,Dépense',
+        'amount' => 'required|numeric|min:0.01',
+        'category_id' => 'nullable|exists:categories,id'
     ]);
 
-    $goal = Goal::findOrFail($id);
-    $goal->update([
-        'name' => $request->name,
-        'target_amount' => $request->target_amount,
-    ]);
-
-    $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-    if (!$profile) {
-        return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-    }
-
-    return redirect()->route('home', ['id' => $profile->id])->with('success', 'Objectif supprimé avec succès.');}
-
-// Supprimer un objectif
-public function deleteGoal($id)
-{
-    $goal = Goal::findOrFail($id);
-    $goal->delete(); // Supprimer l'objectif
-
-    $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-    if (!$profile) {
-        return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-    }
-
-    return redirect()->route('home', ['id' => $profile->id])->with('success', 'Objectif supprimé avec succès.');
-}
-
-// Afficher le formulaire pour modifier une transaction
-public function editTransaction($id)
-{
-    $transaction = Transaction::findOrFail($id); // Récupérer la transaction par son ID
-    $goals = Goal::all(); // Récupérer tous les objectifs financiers pour associer à la transaction
-    return view('edit_transaction', compact('transaction', 'goals'));
-}
-
-// Mettre à jour une transaction
-public function updateTransaction(Request $request, $id)
-{
-    $request->validate([
-        'type' => 'required|in:income,expense',
-        'amount' => 'required|numeric',
-        'description' => 'required|string',
-        'goal_id' => 'nullable|exists:goals,id',
-    ]);
-
-    $transaction = Transaction::findOrFail($id);
     $transaction->update([
         'type' => $request->type,
         'amount' => $request->amount,
-        'description' => $request->description,
-        'goal_id' => $request->goal_id,
+        'category_id' => $request->category_id
     ]);
 
-    $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-    if (!$profile) {
-        return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-    }
-
-    return redirect()->route('home', ['id' => $profile->id])->with('success', 'Objectif supprimé avec succès.');}
-
-// Supprimer une transaction
-public function deleteTransaction($id)
-{
-    $transaction = Transaction::findOrFail($id);
-    $transaction->delete(); // Supprimer la transaction
-
-    $profile = auth()->user()->profiles()->first(); // Récupérer le premier profil de l'utilisateur
-    if (!$profile) {
-        return redirect()->route('welcome')->with('error', 'Aucun profil trouvé.');
-    }
-
-    return redirect()->route('home', ['id' => $profile->id])->with('success', 'Transaction supprimée avec succès.');
+    return redirect()->route('home', session('current_profile'))->with('success', 'Transaction mise à jour avec succès.');
 }
+
+public function destroy(Transaction $transaction)
+{
+    // Vérifier l'accès
+    if ($transaction->profile_id !== session('current_profile')) {
+        return redirect()->route('home', session('current_profile'))->with('error', 'Accès non autorisé.');
+    }
+
+    $transaction->delete();
+
+    return redirect()->route('home', session('current_profile'))->with('success', 'Transaction supprimée avec succès.');
+}
+
 }
