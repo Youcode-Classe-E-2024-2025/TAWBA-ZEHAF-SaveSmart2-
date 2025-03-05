@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'amount', 'description', 'user_id', 'goal_id'];
+    protected $fillable = ['profile_id', 'type', 'amount', 'category_id'];
 
-    public function goal()
+    public function profile()
     {
-        return $this->belongsTo(Goal::class);
+        return $this->belongsTo(Profile::class);
     }
 
-    public function user()
+    public function category()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Category::class);
     }
 }
