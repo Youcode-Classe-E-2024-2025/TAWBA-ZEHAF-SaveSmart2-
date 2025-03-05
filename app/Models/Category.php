@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'user_id'];
-    public $timestamps = false;
 
+    protected $fillable = ['name'];
 
-    // Relation avec l'utilisateur
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
