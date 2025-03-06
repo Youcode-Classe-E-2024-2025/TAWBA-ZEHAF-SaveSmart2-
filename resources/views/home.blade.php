@@ -64,9 +64,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Objectifs financiers</dt>
-                                <dd class="flex items-baseline">
-                                    <div class="text-2xl font-semibold text-gray-900">{{ $objectifinanciers->target_amount }} </div>
-                                </dd>
+                                <div class="text-2xl font-semibold text-gray-900">{{ $objectifinanciers->target_amount ?? ""}} </div>
                             </dl>
                         </div>
                     </div>
@@ -218,7 +216,7 @@
         data: {
             labels: ['Saving', 'Objectif'],
             datasets: [{
-                data: [{{ $totalAmount }}, {{ $objectifinanciers->target_amount }}],
+                data: [{{ $totalAmount }}, {{ $objectifinanciers->target_amount ?? ""}}],
                 backgroundColor: [colors.success, colors.warning],
                 borderColor: ['#FFFFFF', '#FFFFFF'],
                 borderWidth: 2,

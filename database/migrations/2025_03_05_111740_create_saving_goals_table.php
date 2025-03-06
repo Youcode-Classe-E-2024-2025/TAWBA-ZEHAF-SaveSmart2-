@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('savings_goals', function (Blueprint $table) {
+        Schema::create('saving_goals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
             $table->string('name');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('savings_goals');
+        Schema::dropIfExists('saving_goals');
     }
 };

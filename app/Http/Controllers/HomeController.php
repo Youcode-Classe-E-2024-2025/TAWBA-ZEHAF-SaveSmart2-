@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\Transaction;
-use App\Models\SavingsGoal;
+use App\Models\SavingGoal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,14 +16,14 @@ class HomeController extends Controller
         $totalAmount = Transaction::sum('amount');
        
         $lastTransaction = Transaction::latest()->first();
-        $objectifinanciers = SavingsGoal::oldest()->first();
+        $objectifinanciers = SavingGoal::oldest()->first();
         $budgetOptimization = $this->optimizeBudget($totalAmount);
         session(['current_profile'=>$profile->id]);
         return view('home', compact('transactions','totalAmount','lastTransaction','objectifinanciers','budgetOptimization'));
     }
 
     public function affiche(Profile $profile){
-        $goals = SavingsGoal::where('profile_id',$profile->id)->paginate(5);
+        $goals = SavingGoal::where('profile_id',$profile->id)->paginate(5);
         session(['current_profile'=>$profile->id]);
         return view('profilPersonnel', compact('goals'));
     }

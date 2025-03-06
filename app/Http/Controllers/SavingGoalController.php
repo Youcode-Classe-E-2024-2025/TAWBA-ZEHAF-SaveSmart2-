@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SavingsGoal;
+use App\Models\SavingGoal;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 
