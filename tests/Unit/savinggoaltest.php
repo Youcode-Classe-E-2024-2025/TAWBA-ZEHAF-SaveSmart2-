@@ -30,7 +30,7 @@ class savinggoaltest extends TestCase
  */
 public function test_calculate_progress_with_factory()
 {
-    $savingsGoal = SavingsGoal::factory()->create([
+    $savingsGoal = SavingGoal::factory()->create([
         'target_amount' => 1000,
         'saved_amount' => 500,
     ]);
@@ -39,3 +39,5 @@ public function test_calculate_progress_with_factory()
 }
 
 }
+//php artisan make:test savinggoaltest --unit
+// // php artisan test 

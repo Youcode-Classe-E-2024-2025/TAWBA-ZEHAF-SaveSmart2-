@@ -10,6 +10,9 @@ use App\Http\Controllers\SavingGoalController;
 use App\Http\Controllers\HomeController;
 
 
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
