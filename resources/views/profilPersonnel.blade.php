@@ -16,7 +16,7 @@
             <div class="flex flex-wrap gap-3">
                 @if(session('current_profile'))
                     <!-- PDF Export Button -->
-                    <a href="{{ route('exportGoals.pdf', session('current_profile')) }}" 
+                    <a href="{{ route('exportGoalsAsPdf.profile', session('current_profile')) }}" 
                     class="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all duration-200 ease-in-out transform hover:-translate-y-1">
                         <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />

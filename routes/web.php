@@ -49,5 +49,11 @@ Route::get('/export-goals', [SavingGoalController::class, 'exportGoals'])->name(
 
 Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoals'])->name('exportGoals.profile');
 
+// Example of defining a named route
+//Route::get('/export-goals', function () {
+    // Your logic here
+//})->name('exportGoals.pdf');
 
-Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');
+Route::get('/profiles/export-goals/{profile?}', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');
+
+// Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');

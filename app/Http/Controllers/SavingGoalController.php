@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\SavingGoal;
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SavingGoalController extends Controller
 {
     
     public function index()
     {
-        $goals = SavingsGoal::paginate(5);
+        $goals = SavingGoal::paginate(5);
         return view('savings_goals.index', compact('goals'));
     }
 
@@ -34,7 +35,7 @@ class SavingGoalController extends Controller
             'deadline' => 'nullable|date|after_or_equal:today'
         ]);
 
-        SavingsGoal::create($request->all());
+        SavingGoal::create($request->all());
 
         return redirect()->route('savings_goals.index')->with('success', 'Objectif ajouté avec succès.');
     }
@@ -83,7 +84,7 @@ class SavingGoalController extends Controller
             $goals = SavingsGoal::where('profile_id', $profile->id)->get();
             $csvFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.csv';
         } else {
-            $goals = SavingsGoal::all();
+            $goals = SavingGoal::all();
             $csvFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.csv';
         }
     
@@ -119,10 +120,10 @@ class SavingGoalController extends Controller
     {
         // Vérifier si un profil spécifique est fourni
         if ($profile) {
-            $goals = SavingsGoal::where('profile_id', $profile->id)->get();
+            $goals = SavingGoal::where('profile_id', $profile->id)->get();
             $pdfFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
         } else {
-            $goals = SavingsGoal::all();
+            $goals = SavingGoal::all();
             $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
         }
 
