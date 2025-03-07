@@ -3,11 +3,11 @@
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 py-12">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Form Card with Enhanced Styling -->
+       
         <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-2xl animate-fade-in">
-            <!-- Enhanced Header -->
+            
             <div class="px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 relative overflow-hidden">
-                <!-- Decorative Elements -->
+                
                 <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-white opacity-10"></div>
                 <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 rounded-full bg-white opacity-10"></div>
                 
@@ -26,7 +26,7 @@
                 </div>
             </div>
             
-            <!-- Enhanced Form -->
+        
             <div class="px-8 py-10">
                 <!-- ADD THIS ERROR DISPLAY SECTION -->
                 @if ($errors->any())

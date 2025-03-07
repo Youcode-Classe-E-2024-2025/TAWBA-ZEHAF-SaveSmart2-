@@ -41,20 +41,21 @@ class SavingGoalController extends Controller
     }
 
 
-    public function show(SavingsGoal $savingsGoal)
+    public function show(SavingGoal $savingsGoal)
     {
         return view('savings_goals.show', compact('savingsGoal'));
     }
 
  
-    public function edit(SavingsGoal $savingsGoal)
+    public function edit(SavingGoal $savingsGoal)
     {
         $profiles = Profile::all();
         return view('savings_goals.edit', compact('savingsGoal', 'profiles'));
     }
 
-    // Mettre à jour un objectif d'épargne
-    public function update(Request $request, SavingsGoal $savingsGoal)
+  
+    
+    public function update(Request $request, SavingGoal $savingsGoal)
     {
         $request->validate([
             'profile_id' => 'required|exists:profiles,id',
@@ -70,7 +71,7 @@ class SavingGoalController extends Controller
     }
 
   
-    public function destroy(SavingsGoal $savingsGoal)
+    public function destroy(SavingGoal $savingsGoal)
     {
         $savingsGoal->delete();
         return redirect()->route('savings_goals.index')->with('success', 'Objectif supprimé avec succès.');
@@ -79,9 +80,10 @@ class SavingGoalController extends Controller
 
     public function exportGoals(Request $request, Profile $profile = null)
     {
-        // Vérifier si un profil spécifique est fourni
+        
+        
         if ($profile) {
-            $goals = SavingsGoal::where('profile_id', $profile->id)->get();
+            $goals = SavingGoal::where('profile_id', $profile->id)->get();
             $csvFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.csv';
         } else {
             $goals = SavingGoal::all();
@@ -116,25 +118,10 @@ class SavingGoalController extends Controller
     
         return response()->streamDownload($callback, $csvFileName, $headers);
     }
-    // public function exportGoalsAsPdf(Request $request, Profile $profile = null)
-    // {
-    //     // Vérifier si un profil spécifique est fourni
-    //     if ($profile) {
-    //         $goals = SavingGoal::where('profile_id', $profile->id)->get();
-    //         $pdfFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
-    //     } else {
-    //         $goals = SavingGoal::all();
-    //         $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
-    //     }
 
-    //     // Générer le PDF
-    //     $pdf = PDF::loadView('pdf.goals', compact('goals'));
-
-    //     // Retourner le PDF en téléchargement
-    //     return $pdf->download($pdfFileName);
-    // }
     public function exportGoalsAsPdf(Request $request, Profile $profile = null)
 {
+   
     // Vérifier si un profil spécifique est fourni
     if ($profile) {
         $goals = SavingGoal::where('profile_id', $profile->id)->get();
@@ -144,10 +131,8 @@ class SavingGoalController extends Controller
         $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
     }
 
-    // Générer le PDF
     $pdf = PDF::loadView('pdf.goals', compact('goals'));
 
-    // Retourner le PDF en téléchargement
     return $pdf->download($pdfFileName);
 }
 

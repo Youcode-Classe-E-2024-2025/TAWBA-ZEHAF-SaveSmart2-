@@ -45,11 +45,8 @@ Route::resource('transactions', TransactionController::class);
 Route::resource('savings_goals', SavingGoalController::class)->names([
     'index' => 'savings_goals.index',
     'create' => 'savings_goals.create',
-    'store' => 'savings_goals.store',
-    'show' => 'savings_goals.show',
     'edit' => 'savings_goals.edit',
-    'update' => 'savings_goals.update',
-    'destroy' => 'savings_goals.destroy',
+   
 ]);
 
 
