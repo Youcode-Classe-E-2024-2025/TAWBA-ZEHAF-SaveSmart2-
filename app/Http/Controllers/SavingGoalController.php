@@ -116,21 +116,39 @@ class SavingGoalController extends Controller
     
         return response()->streamDownload($callback, $csvFileName, $headers);
     }
+    // public function exportGoalsAsPdf(Request $request, Profile $profile = null)
+    // {
+    //     // Vérifier si un profil spécifique est fourni
+    //     if ($profile) {
+    //         $goals = SavingGoal::where('profile_id', $profile->id)->get();
+    //         $pdfFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
+    //     } else {
+    //         $goals = SavingGoal::all();
+    //         $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
+    //     }
+
+    //     // Générer le PDF
+    //     $pdf = PDF::loadView('pdf.goals', compact('goals'));
+
+    //     // Retourner le PDF en téléchargement
+    //     return $pdf->download($pdfFileName);
+    // }
     public function exportGoalsAsPdf(Request $request, Profile $profile = null)
-    {
-        // Vérifier si un profil spécifique est fourni
-        if ($profile) {
-            $goals = SavingGoal::where('profile_id', $profile->id)->get();
-            $pdfFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
-        } else {
-            $goals = SavingGoal::all();
-            $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
-        }
-
-        // Générer le PDF
-        $pdf = PDF::loadView('pdf.goals', compact('goals'));
-
-        // Retourner le PDF en téléchargement
-        return $pdf->download($pdfFileName);
+{
+    // Vérifier si un profil spécifique est fourni
+    if ($profile) {
+        $goals = SavingGoal::where('profile_id', $profile->id)->get();
+        $pdfFileName = 'goals_profile_' . $profile->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
+    } else {
+        $goals = SavingGoal::all();
+        $pdfFileName = 'all_goals_' . date('Y-m-d_H-i-s') . '.pdf';
     }
+
+    // Générer le PDF
+    $pdf = PDF::loadView('pdf.goals', compact('goals'));
+
+    // Retourner le PDF en téléchargement
+    return $pdf->download($pdfFileName);
+}
+
 }

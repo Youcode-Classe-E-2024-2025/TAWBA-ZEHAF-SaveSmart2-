@@ -41,7 +41,16 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::resource('transactions', TransactionController::class);
-Route::resource('savings_goals', SavingGoalController::class)->names(['index'   => 'savings_goals.index',]);
+// Route::resource('savings_goals', SavingGoalController::class)->names(['index'   => 'savings_goals.index',]);
+Route::resource('savings_goals', SavingGoalController::class)->names([
+    'index' => 'savings_goals.index',
+    'create' => 'savings_goals.create',
+    'store' => 'savings_goals.store',
+    'show' => 'savings_goals.show',
+    'edit' => 'savings_goals.edit',
+    'update' => 'savings_goals.update',
+    'destroy' => 'savings_goals.destroy',
+]);
 
 
 Route::get('/export-goals', [SavingGoalController::class, 'exportGoals'])->name('exportGoals.all');
@@ -49,11 +58,6 @@ Route::get('/export-goals', [SavingGoalController::class, 'exportGoals'])->name(
 
 Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoals'])->name('exportGoals.profile');
 
-// Example of defining a named route
-//Route::get('/export-goals', function () {
-    // Your logic here
-//})->name('exportGoals.pdf');
+
 
 Route::get('/profiles/export-goals/{profile?}', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');
-
-// Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');

@@ -28,6 +28,17 @@
             
             <!-- Enhanced Form -->
             <div class="px-8 py-10">
+                <!-- ADD THIS ERROR DISPLAY SECTION -->
+                @if ($errors->any())
+                    <div class="mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded-md">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('savings_goals.store') }}" method="POST">
                     @csrf
                     <div class="space-y-8">
@@ -44,7 +55,8 @@
                                 <input type="text" name="name" id="name" class="pl-12 block w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 py-3.5 bg-gray-50 focus:bg-white" placeholder="Ex: Achat maison, Vacances..." required>
                             </div>
                         </div>
-                        <input type="hidden" value="{{ session('current_profile') }}" name="profile_id" id="profile_id" required>
+                        <!-- ENSURE THE PROFILE_ID IS BEING PASSED CORRECTLY -->
+                        <input type="hidden" name="profile_id" id="profile_id" value="{{ session('current_profile') }}" required>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="transition-all duration-300 transform hover:-translate-y-1">
@@ -61,26 +73,24 @@
                                     </div>
                                 </div>
                             </div>
-    
                             <div class="transition-all duration-300 transform hover:-translate-y-1">
                                 <label for="saved_amount" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Montant enregistré
+                                    Montant actuel
                                 </label>
                                 <div class="relative rounded-md group">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <span class="text-indigo-500 group-hover:text-indigo-600 transition-colors duration-200 font-medium">MAD</span>
                                     </div>
-                                    <input type="number" name="saved_amount" id="saved_amount" class="pl-14 pr-14 block w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 py-3.5 bg-gray-50 focus:bg-white" placeholder="0.00" step="0.01" required>
+                                    <input type="number" name="saved_amount" id="saved_amount" class="pl-14 pr-14 block w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 py-3.5 bg-gray-50 focus:bg-white" placeholder="0.00" step="0.01">
                                     <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm">DH</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="transition-all duration-300 transform hover:-translate-y-1">
                             <label for="deadline" class="block text-sm font-medium text-gray-700 mb-2">
-                                Date d'échéance
+                                Date limite
                             </label>
                             <div class="relative rounded-md group">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -92,72 +102,18 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Enhanced Buttons -->
-                    <div class="mt-12 flex items-center justify-end space-x-6">
-                        <a href="{{ route('home',session('current_profile')) }}" class="bg-white py-3.5 px-7 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 hover:shadow-md">
+                    <div class="mt-12">
+                        <button type="submit" class="relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm hover:shadow-lg transform transition-all duration-200">
+                            <span class="absolute inset-0 rounded-xl opacity-20 bg-gradient-to-r from-indigo-500 to-purple-600"></span>
+                            <span class="relative z-10">Créer l'objectif</span>
+                        </button>
+                        <a href="{{ route('savings_goals.index') }}" class="ml-4 text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200">
                             Annuler
                         </a>
-                        <button type="submit" class="inline-flex justify-center py-3.5 px-7 border border-transparent shadow-md text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:-translate-y-1 hover:shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Créer l'objectif
-                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    /* Animation for fade in */
-    @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    
-    .animate-fade-in {
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-    
-    /* Custom styles for form elements */
-    input[type="text"],
-    input[type="number"],
-    input[type="date"] {
-        transition: all 0.3s ease;
-    }
-    
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    input[type="date"]:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        transform: translateY(-2px);
-    }
-    
-    /* Improved gradient animation */
-    .bg-gradient-to-r {
-        background-size: 200% 200%;
-        animation: gradientAnimation 8s ease infinite;
-    }
-    
-    @keyframes gradientAnimation {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-    
-    /* Hover effect for form groups */
-    .group:hover input {
-        border-color: #6366f1;
-    }
-</style>
 @endsection
