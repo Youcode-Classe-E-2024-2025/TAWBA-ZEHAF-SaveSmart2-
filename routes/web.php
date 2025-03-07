@@ -45,4 +45,9 @@ Route::resource('savings_goals', SavingGoalController::class)->names(['index'   
 
 
 Route::get('/export-goals', [SavingGoalController::class, 'exportGoals'])->name('exportGoals.all');
+
+
 Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoals'])->name('exportGoals.profile');
+
+
+Route::get('/profiles/{profile}/export-goals', [SavingGoalController::class, 'exportGoalsAsPdf'])->name('exportGoalsAsPdf.profile');
